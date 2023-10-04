@@ -13,7 +13,7 @@ Setup Development Environment:
 - Ensure you have Java 17 installed (17.0.8.1 JDK originally used)
 - Ensure you have Maven 3.9.4 installed
 - Install MongoDB and start the MongoDB server
-	- Databse name: shifts
+	- Databse name: main/shifts
 	- Collection name: employees
 	- MongoDB port: localhost:27017
 
@@ -22,4 +22,13 @@ Setup Development Environment:
 ## Usage
 
 Eclipse Testing:
-- Right-click on your main Spring Boot class (ShiftClockApplication), and select Run As > Java Application.
+- Right-click on your project (shift-clock) and select Run As > shift-clock (Maven Build).
+
+Eclipse Debug Testing:
+- Right-click on your project (shift-clock) and select Run As > Java Application
+- Select the ShiftClockApplication - com.example.shiftclock
+
+Command Line Testing:
+- Change your directory to the java-simple-employee-clock\Maven\shift-clock where the pom.xml file is
+- run "mvn clean install"
+- run "mvn spring-boot:run"
