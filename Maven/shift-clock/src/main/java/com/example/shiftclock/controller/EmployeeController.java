@@ -35,7 +35,7 @@ public class EmployeeController {
 			return ResponseEntity.notFound().build();
 		}
 		var lastShift = foundEmployee.getLastShift();
-		if (lastShift.shiftStart != null && lastShift.shiftEnd == null) {
+		if (lastShift != null && lastShift.shiftStart != null && lastShift.shiftEnd == null) {
 			return ResponseEntity.ok("Shift already started");
 		}
 		employeeService.startShift(foundEmployee);

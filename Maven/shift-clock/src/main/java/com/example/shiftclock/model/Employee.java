@@ -34,10 +34,12 @@ public class Employee {
     
     public void stopShift(long elapsedTime) {
     	var lastShift = getLastShift();
+    	if (lastShift == null) return;
     	lastShift.shiftEnd = new Date(lastShift.shiftStart.getTime() + elapsedTime);
     }
     
     public Shift getLastShift() {
+    	if (shifts.size() == 0) return null;
     	return shifts.get(shifts.size()-1);
     }
 }
