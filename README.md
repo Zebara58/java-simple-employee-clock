@@ -40,8 +40,11 @@ POST http://localhost:8080/employees/add-employee
     "Id": "dc1e46c3-3d3d-4a47-9e4c-593f89feef40"
 }
 
-- Get Employee
-GET http://localhost:8080/employees/get-employee/dc1e46c3-3d3d-4a47-9e4c-593f89feef40
+- Get Employee Last Shift
+GET http://localhost:8080/employees/get-employee-last-shift/dc1e46c3-3d3d-4a47-9e4c-593f89feef40
+
+- Get Employee All Shifts
+GET http://localhost:8080/employees/get-employee-all-shifts/dc1e46c3-3d3d-4a47-9e4c-593f89feef40
 
 - Start Shift
 POST http://localhost:8080/employees/start-shift/dc1e46c3-3d3d-4a47-9e4c-593f89feef40

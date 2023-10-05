@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "employees")
 public class Employee {
 	@Id
 	private String id;
+	
+	@DBRef(lazy=true)
 	private List<Shift> shifts;
 	
 	public Employee() {
@@ -20,6 +23,10 @@ public class Employee {
 	
     public String getId() {
         return id;
+    }
+    
+    public List<Shift> getShifts() {
+    	return shifts;
     }
 
     public void setId(UUID id) {

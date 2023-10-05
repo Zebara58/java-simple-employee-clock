@@ -1,5 +1,6 @@
 package com.example.shiftclock.controller;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,8 @@ public class EmployeeController {
 		return ResponseEntity.ok(employee);
 	}
 	
-	@GetMapping("/get-employee/{id}")
-	public ResponseEntity<Employee> getEmployee(@PathVariable UUID id) {
+	@GetMapping("/get-employee-last-shift/{id}")
+	public ResponseEntity<Shift> getEmployeeLastShift(@PathVariable UUID id) {
 		if (id == null) {
 			return ResponseEntity.notFound().build();
 		}
@@ -34,7 +35,24 @@ public class EmployeeController {
 		if (foundEmployee == null) {
 			return ResponseEntity.notFound().build();
 		}
-		return ResponseEntity.ok(foundEmployee);
+		var shifts = foundEmployee.getShifts();
+		if (shifts.size() == 0) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok(shifts.get(shifts.size()-1));
+	}
+	
+	@GetMapping("/get-employee-all-shifts/{id}")
+	public ResponseEntity<List<Shift>> getEmployeeAllShifts(@PathVariable UUID id) {
+		if (id == null) {
+			return ResponseEntity.notFound().build();
+		}
+		var foundEmployee = employeeService.getEmployee(id.toString());
+		if (foundEmployee == null) {
+			return ResponseEntity.notFound().build();
+		}
+		var shifts = foundEmployee.getShifts();
+		return ResponseEntity.ok(shifts);
 	}
 	
 	@PostMapping("/start-shift/{id}")
