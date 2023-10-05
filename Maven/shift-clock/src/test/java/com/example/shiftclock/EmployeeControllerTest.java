@@ -119,4 +119,180 @@ public class EmployeeControllerTest {
         .andExpect(jsonPath("$.shiftStart").isString())
         .andExpect(jsonPath("$.shiftEnd").isString());
 	}
+	
+	@Test
+	public void testStopLunchWhenNoId() throws Exception {
+		mockMvc.perform(post("/employees/stop-lunch/")).andExpect(status().isNotFound());
+	}
+	
+	@Test
+	public void testStopLunchWhenEmployeeNotFound() throws Exception {
+		var employeeId = UUID.randomUUID();
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(null);
+		mockMvc.perform(post("/employees/stop-lunch/"+employeeId)).andExpect(status().isNotFound());
+	}
+	
+	@Test
+	public void testStopLunchWhenShiftMissing() throws Exception {
+		var employeeId = UUID.randomUUID();
+		var employee = new Employee();
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(employee);
+		mockMvc.perform(post("/employees/stop-lunch/"+employeeId).contentType("application/json"))
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void testStopLunchWhenShiftStarted() throws Exception {
+		var employeeId = UUID.randomUUID();
+		var employee = new Employee();
+		employee.startShift();
+		employee.startLunch();
+		employee.stopLunch(10);
+		var shift = employee.getLastShift();
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(employee);
+		when(employeeService.stopLunch(employee)).thenReturn(shift);
+		mockMvc.perform(post("/employees/stop-lunch/"+employeeId).contentType("application/json"))
+		.andExpect(status().isOk())
+        .andExpect(jsonPath("$.shiftStart").isString())
+        .andExpect(jsonPath("$.lunchStart").isString())
+        .andExpect(jsonPath("$.lunchEnd").isString());
+	}
+	
+	@Test
+	public void testStopBreakWhenNoId() throws Exception {
+		mockMvc.perform(post("/employees/stop-break/")).andExpect(status().isNotFound());
+	}
+	
+	@Test
+	public void testStopBreakWhenEmployeeNotFound() throws Exception {
+		var employeeId = UUID.randomUUID();
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(null);
+		mockMvc.perform(post("/employees/stop-break/"+employeeId)).andExpect(status().isNotFound());
+	}
+	
+	@Test
+	public void testStopBreakWhenShiftMissing() throws Exception {
+		var employeeId = UUID.randomUUID();
+		var employee = new Employee();
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(employee);
+		mockMvc.perform(post("/employees/stop-break/"+employeeId).contentType("application/json"))
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void testStopBreakWhenShiftStarted() throws Exception {
+		var employeeId = UUID.randomUUID();
+		var employee = new Employee();
+		employee.startShift();
+		employee.startBreak();
+		employee.stopBreak(10);
+		var shift = employee.getLastShift();
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(employee);
+		when(employeeService.stopBreak(employee)).thenReturn(shift);
+		mockMvc.perform(post("/employees/stop-break/"+employeeId).contentType("application/json"))
+		.andExpect(status().isOk())
+        .andExpect(jsonPath("$.shiftStart").isString())
+        .andExpect(jsonPath("$.breakStart").isString())
+        .andExpect(jsonPath("$.breakEnd").isString());
+	}
+	
+	@Test
+	public void testStartLunchWhenNoId() throws Exception {
+		mockMvc.perform(post("/employees/start-lunch/")).andExpect(status().isNotFound());
+	}
+	
+	@Test
+	public void testStartBreakWhenNoId() throws Exception {
+		mockMvc.perform(post("/employees/start-break/")).andExpect(status().isNotFound());
+	}
+	
+	@Test
+	public void testStartLunchWhenEmployeeNotFound() throws Exception {
+		var employeeId = UUID.randomUUID();
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(null);
+		mockMvc.perform(post("/employees/start-lunch/"+employeeId)).andExpect(status().isNotFound());
+	}
+	
+	@Test
+	public void testStartBreakWhenEmployeeNotFound() throws Exception {
+		var employeeId = UUID.randomUUID();
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(null);
+		mockMvc.perform(post("/employees/start-break/"+employeeId)).andExpect(status().isNotFound());
+	}
+	
+	@Test
+	public void testStartLunchWhenShiftAlreadyStarted() throws Exception {
+		var employeeId = UUID.randomUUID();
+		var employee = new Employee();
+		employee.startShift();
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(employee);
+		mockMvc.perform(post("/employees/start-lunch/"+employeeId)).andExpect(status().isOk());
+	}
+	
+	@Test
+	public void testStartBreakWhenShiftAlreadyStarted() throws Exception {
+		var employeeId = UUID.randomUUID();
+		var employee = new Employee();
+		employee.startShift();
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(employee);
+		mockMvc.perform(post("/employees/start-break/"+employeeId)).andExpect(status().isOk());
+	}
+	
+	@Test
+	public void testStartLunchWhenLunchAlreadyStarted() throws Exception {
+		var employeeId = UUID.randomUUID();
+		var employee = new Employee();
+		employee.startShift();
+		employee.startLunch();
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(employee);
+		mockMvc.perform(post("/employees/start-lunch/"+employeeId)).andExpect(status().isOk());
+	}
+	
+	@Test
+	public void testStartBreakWhenBreakAlreadyStarted() throws Exception {
+		var employeeId = UUID.randomUUID();
+		var employee = new Employee();
+		employee.startShift();
+		employee.startBreak();
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(employee);
+		mockMvc.perform(post("/employees/start-break/"+employeeId)).andExpect(status().isOk());
+	}
+	
+	@Test
+	public void testStartLunchWhenLunchAlreadyEnded() throws Exception {
+		var employeeId = UUID.randomUUID();
+		var employee = new Employee();
+		employee.startShift();
+		employee.startLunch();
+		employee.stopLunch(100);
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(employee);
+		mockMvc.perform(post("/employees/start-lunch/"+employeeId)).andExpect(status().isOk());
+	}
+	
+	@Test
+	public void testStartBreakWhenBreakAlreadyEnded() throws Exception {
+		var employeeId = UUID.randomUUID();
+		var employee = new Employee();
+		employee.startShift();
+		employee.startBreak();
+		employee.stopBreak(100);
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(employee);
+		mockMvc.perform(post("/employees/start-break/"+employeeId)).andExpect(status().isOk());
+	}
+	
+	@Test
+	public void testStartLunchWhenShiftNotStarted() throws Exception {
+		var employeeId = UUID.randomUUID();
+		var employee = new Employee();
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(employee);
+		mockMvc.perform(post("/employees/start-lunch/"+employeeId)).andExpect(status().isOk());
+	}
+	
+	@Test
+	public void testStartBreakWhenShiftNotStarted() throws Exception {
+		var employeeId = UUID.randomUUID();
+		var employee = new Employee();
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(employee);
+		mockMvc.perform(post("/employees/start-break/"+employeeId)).andExpect(status().isOk());
+	}
 }
