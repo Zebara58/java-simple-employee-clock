@@ -12,15 +12,6 @@ public class EmployeeService {
 	@Autowired
 	private IEmployeeRepository employeeRepository;
 	
-	@Autowired
-	private TimerService timerService;
-	
-	@Autowired
-	private BreakTimerService breakTimerService;
-	
-	@Autowired
-	private LunchTimerService lunchTimerService;
-	
 	public Employee addEmployee(Employee employee) {
 		return employeeRepository.save(employee);
 	}
@@ -35,7 +26,6 @@ public class EmployeeService {
 	
 	public void startShift(Employee employee) {
 		employee.startShift();
-		timerService.start(employee.getId());
 		employeeRepository.save(employee);
 	}
 	
@@ -44,7 +34,7 @@ public class EmployeeService {
 		if (lastShift.shiftStart == null || lastShift.shiftEnd != null) {
 			return lastShift;
 		}
-		var elapsedTime = timerService.stop(employee.getId());
+		var elapsedTime = TimerService.stopShift(lastShift);
 		employee.stopShift(elapsedTime);
 		employeeRepository.save(employee);
 		return employee.getLastShift();
@@ -52,7 +42,6 @@ public class EmployeeService {
 	
 	public void startLunch(Employee employee) {
 		employee.startLunch();
-		lunchTimerService.start(employee.getId());
 		employeeRepository.save(employee);
 	}
 	
@@ -61,7 +50,7 @@ public class EmployeeService {
 		if (lastShift.lunchStart == null || lastShift.lunchEnd != null) {
 			return lastShift;
 		}
-		var elapsedTime = lunchTimerService.stop(employee.getId());
+		var elapsedTime = TimerService.stopLunch(lastShift);
 		employee.stopLunch(elapsedTime);
 		employeeRepository.save(employee);
 		return employee.getLastShift();
@@ -69,7 +58,6 @@ public class EmployeeService {
 	
 	public void startBreak(Employee employee) {
 		employee.startBreak();
-		breakTimerService.start(employee.getId());
 		employeeRepository.save(employee);
 	}
 	
@@ -78,7 +66,7 @@ public class EmployeeService {
 		if (lastShift.breakStart == null || lastShift.breakEnd != null) {
 			return lastShift;
 		}
-		var elapsedTime = breakTimerService.stop(employee.getId());
+		var elapsedTime = TimerService.stopBreak(lastShift);
 		employee.stopBreak(elapsedTime);
 		employeeRepository.save(employee);
 		return employee.getLastShift();

@@ -13,7 +13,7 @@ Setup Development Environment:
 - Ensure you have Java 17 installed (17.0.8.1 JDK originally used)
 - Ensure you have Maven 3.9.4 installed
 - Install MongoDB and start the MongoDB server
-	- Databse name: main/shifts
+	- Database name: shifts
 	- Collection name: employees
 	- MongoDB port: localhost:27017
 
