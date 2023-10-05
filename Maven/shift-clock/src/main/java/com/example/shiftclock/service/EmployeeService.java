@@ -66,4 +66,21 @@ public class EmployeeService {
 		employeeRepository.save(employee);
 		return employee.getLastShift();
 	}
+	
+	public void startBreak(Employee employee) {
+		employee.startBreak();
+		breakTimerService.start(employee.getId());
+		employeeRepository.save(employee);
+	}
+	
+	public Shift stopBreak(Employee employee) {
+		var lastShift = employee.getLastShift();
+		if (lastShift.breakStart == null || lastShift.breakEnd != null) {
+			return lastShift;
+		}
+		var elapsedTime = breakTimerService.stop(employee.getId());
+		employee.stopBreak(elapsedTime);
+		employeeRepository.save(employee);
+		return employee.getLastShift();
+	}
 }

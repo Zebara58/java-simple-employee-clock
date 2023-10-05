@@ -36,6 +36,7 @@ public class TimerService {
 			long endTime = System.currentTimeMillis();
 		    elapsedTime = endTime - shiftTrack.startTime;
 		}
+		timers.remove(id);
 		return elapsedTime;
 	}
 }

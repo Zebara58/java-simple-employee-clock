@@ -101,6 +101,46 @@ public class EmployeeController {
 		return ResponseEntity.ok(lastShift);
 	}
 	
+	@PostMapping("/start-break/{id}")
+	public ResponseEntity<String> startBreak(@PathVariable UUID id) {
+		if (id == null) {
+			return ResponseEntity.notFound().build();
+		}
+		var foundEmployee = employeeService.getEmployee(id.toString());
+		if (foundEmployee == null) {
+			return ResponseEntity.notFound().build();
+		}
+		var lastShift = foundEmployee.getLastShift();
+		if (shiftNotStarted(lastShift)) {
+			return ResponseEntity.ok("Shift not started");
+		}
+		if (lastShift.breakEnd != null) {
+			return ResponseEntity.ok("Break already ended");
+		}
+		if (lastShift.breakStart != null) {
+			return ResponseEntity.ok("Break already started");
+		}
+		employeeService.startBreak(foundEmployee);
+		return ResponseEntity.ok("Break started");
+	}
+	
+	@PostMapping("/stop-break/{id}")
+	public ResponseEntity<Shift> stopBreak(@PathVariable UUID id) {
+		if (id == null) {
+			return ResponseEntity.notFound().build();
+		}
+		var foundEmployee = employeeService.getEmployee(id.toString());
+		if (foundEmployee == null) {
+			return ResponseEntity.notFound().build();
+		}
+		var lastShift = foundEmployee.getLastShift();
+		if (lastShift == null) {
+			return ResponseEntity.badRequest().build();
+		}
+		lastShift = employeeService.stopBreak(foundEmployee);
+		return ResponseEntity.ok(lastShift);
+	}
+	
 	private boolean shiftNotStarted(Shift lastShift) {
 		return lastShift == null || lastShift.shiftStart == null || lastShift.shiftEnd != null;
 	}
