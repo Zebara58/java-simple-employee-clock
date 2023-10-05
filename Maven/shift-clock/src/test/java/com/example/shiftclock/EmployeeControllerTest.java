@@ -35,6 +35,16 @@ public class EmployeeControllerTest {
 	}
 	
 	@Test
+	public void testAddEmployeeAlreadyExists() throws Exception {
+		var employeeId = UUID.randomUUID();
+		var employee = new Employee();
+		employee.setId(employeeId);
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(employee);
+		mockMvc.perform(post("/employees/add-employee").content("{\"Id\": \""+employeeId.toString()+"\"}").contentType("application/json"))
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
 	public void testStartShiftWhenNoId() throws Exception {
 		mockMvc.perform(post("/employees/start-shift/")).andExpect(status().isNotFound());
 	}
