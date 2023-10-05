@@ -13,7 +13,7 @@ import com.example.shiftclock.model.ShiftTrack;
 public class TimerService {
 	private final Map<String, ShiftTrack> timers = new HashMap<>();
 	
-	public void startShift(String id) {
+	public void start(String id) {
 		Timer timer = new Timer();
 		var timerTask = new TimerTask() {
 			@Override
@@ -28,7 +28,7 @@ public class TimerService {
 	}
 	
 	// Returns the elapsed time for the timer in Milliseconds
-	public long stopShift(String id) {
+	public long stop(String id) {
 		var shiftTrack = timers.get(id);
 		long elapsedTime = 0;
 		if (shiftTrack != null && shiftTrack.timer != null) {

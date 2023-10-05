@@ -15,18 +15,13 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.shiftclock.controller.EmployeeController;
 import com.example.shiftclock.model.Employee;
-import com.example.shiftclock.model.EmployeeRequest;
 import com.example.shiftclock.service.EmployeeService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(EmployeeController.class)
 public class EmployeeControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
-	
-	@Autowired
-    private ObjectMapper objectMapper;
 	
 	@MockBean
 	private EmployeeService employeeService;
@@ -77,6 +72,37 @@ public class EmployeeControllerTest {
 		var employeeId = UUID.randomUUID();
 		when(employeeService.getEmployee(employeeId.toString())).thenReturn(null);
 		mockMvc.perform(post("/employees/stop-shift/"+employeeId)).andExpect(status().isNotFound());
+	}
+	
+	@Test
+	public void testStopShiftWhenShiftMissing() throws Exception {
+		var employeeId = UUID.randomUUID();
+		var employee = new Employee();
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(employee);
+		mockMvc.perform(post("/employees/stop-shift/"+employeeId).contentType("application/json"))
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void testStopShiftWhenShiftHasLunchNotFinished() throws Exception {
+		var employeeId = UUID.randomUUID();
+		var employee = new Employee();
+		employee.startShift();
+		employee.startLunch();
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(employee);
+		mockMvc.perform(post("/employees/stop-shift/"+employeeId).contentType("application/json"))
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void testStopShiftWhenShiftHasBreakNotFinished() throws Exception {
+		var employeeId = UUID.randomUUID();
+		var employee = new Employee();
+		employee.startShift();
+		employee.startBreak();
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(employee);
+		mockMvc.perform(post("/employees/stop-shift/"+employeeId).contentType("application/json"))
+		.andExpect(status().isBadRequest());
 	}
 	
 	@Test

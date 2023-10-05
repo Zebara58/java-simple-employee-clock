@@ -42,4 +42,40 @@ public class Employee {
     	if (shifts.size() == 0) return null;
     	return shifts.get(shifts.size()-1);
     }
+    
+    public void startLunch() {
+    	var lastShift = getLastShift();
+    	if (validateShiftIsActiveAndNotOver(lastShift) || lastShift.lunchStart !=null) {
+    		return;
+    	}
+    	lastShift.lunchStart = new Date();
+    }
+    
+    public void stopLunch(long elapsedTime) {
+    	var lastShift = getLastShift();
+    	if (lastShift == null || lastShift.lunchStart == null) {
+    		return;
+    	}
+    	lastShift.lunchEnd = new Date(lastShift.lunchStart.getTime() + elapsedTime);
+    }
+    
+    public void startBreak() {
+    	var lastShift = getLastShift();
+    	if (validateShiftIsActiveAndNotOver(lastShift) || lastShift.breakStart !=null) {
+    		return;
+    	}
+    	lastShift.breakStart = new Date();
+    }
+    
+    public void stopBreak(long elapsedTime) {
+    	var lastShift = getLastShift();
+    	if (lastShift == null || lastShift.breakStart == null) {
+    		return;
+    	}
+    	lastShift.breakEnd = new Date(lastShift.breakStart.getTime() + elapsedTime);
+    }
+    
+    private boolean validateShiftIsActiveAndNotOver(Shift lastShift) {
+    	return lastShift.shiftStart == null || lastShift.shiftEnd != null;
+    }
 }

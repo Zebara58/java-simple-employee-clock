@@ -7,6 +7,6 @@ public class Shift {
 	public Date shiftEnd;
 	public Date breakStart;
 	public Date breakEnd;
-	public Date startLunch;
-	public Date endLunch;
+	public Date lunchStart;
+	public Date lunchEnd;
 }

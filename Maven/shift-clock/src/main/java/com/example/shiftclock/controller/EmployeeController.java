@@ -51,7 +51,57 @@ public class EmployeeController {
 		if (foundEmployee == null) {
 			return ResponseEntity.notFound().build();
 		}
-		var lastShift = employeeService.stopShift(foundEmployee);
+		var lastShift = foundEmployee.getLastShift();
+		if (lastShift == null || 
+				(lastShift.breakStart != null && lastShift.breakEnd == null) || 
+				(lastShift.lunchStart !=null && lastShift.lunchEnd == null)) {
+			return ResponseEntity.badRequest().build();
+		}
+		lastShift = employeeService.stopShift(foundEmployee);
 		return ResponseEntity.ok(lastShift);
+	}
+	
+	@PostMapping("/start-lunch/{id}")
+	public ResponseEntity<String> startLunch(@PathVariable UUID id) {
+		if (id == null) {
+			return ResponseEntity.notFound().build();
+		}
+		var foundEmployee = employeeService.getEmployee(id.toString());
+		if (foundEmployee == null) {
+			return ResponseEntity.notFound().build();
+		}
+		var lastShift = foundEmployee.getLastShift();
+		if (shiftNotStarted(lastShift)) {
+			return ResponseEntity.ok("Shift not started");
+		}
+		if (lastShift.lunchEnd != null) {
+			return ResponseEntity.ok("Lunch already ended");
+		}
+		if (lastShift.lunchStart != null) {
+			return ResponseEntity.ok("Lunch already started");
+		}
+		employeeService.startLunch(foundEmployee);
+		return ResponseEntity.ok("Lunch started");
+	}
+	
+	@PostMapping("/stop-lunch/{id}")
+	public ResponseEntity<Shift> stopLunch(@PathVariable UUID id) {
+		if (id == null) {
+			return ResponseEntity.notFound().build();
+		}
+		var foundEmployee = employeeService.getEmployee(id.toString());
+		if (foundEmployee == null) {
+			return ResponseEntity.notFound().build();
+		}
+		var lastShift = foundEmployee.getLastShift();
+		if (lastShift == null) {
+			return ResponseEntity.badRequest().build();
+		}
+		lastShift = employeeService.stopLunch(foundEmployee);
+		return ResponseEntity.ok(lastShift);
+	}
+	
+	private boolean shiftNotStarted(Shift lastShift) {
+		return lastShift == null || lastShift.shiftStart == null || lastShift.shiftEnd != null;
 	}
 }

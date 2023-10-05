@@ -15,6 +15,12 @@ public class EmployeeService {
 	@Autowired
 	private TimerService timerService;
 	
+	@Autowired
+	private BreakTimerService breakTimerService;
+	
+	@Autowired
+	private LunchTimerService lunchTimerService;
+	
 	public Employee addEmployee(Employee employee) {
 		return employeeRepository.save(employee);
 	}
@@ -29,7 +35,7 @@ public class EmployeeService {
 	
 	public void startShift(Employee employee) {
 		employee.startShift();
-		timerService.startShift(employee.getId());
+		timerService.start(employee.getId());
 		employeeRepository.save(employee);
 	}
 	
@@ -38,8 +44,25 @@ public class EmployeeService {
 		if (lastShift.shiftStart == null || lastShift.shiftEnd != null) {
 			return lastShift;
 		}
-		var elapsedTime = timerService.stopShift(employee.getId());
+		var elapsedTime = timerService.stop(employee.getId());
 		employee.stopShift(elapsedTime);
+		employeeRepository.save(employee);
+		return employee.getLastShift();
+	}
+	
+	public void startLunch(Employee employee) {
+		employee.startLunch();
+		lunchTimerService.start(employee.getId());
+		employeeRepository.save(employee);
+	}
+	
+	public Shift stopLunch(Employee employee) {
+		var lastShift = employee.getLastShift();
+		if (lastShift.lunchStart == null || lastShift.lunchEnd != null) {
+			return lastShift;
+		}
+		var elapsedTime = lunchTimerService.stop(employee.getId());
+		employee.stopLunch(elapsedTime);
 		employeeRepository.save(employee);
 		return employee.getLastShift();
 	}
