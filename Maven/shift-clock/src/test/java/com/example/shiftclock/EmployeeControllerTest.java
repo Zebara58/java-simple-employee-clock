@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.UUID;
 
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,25 +47,62 @@ public class EmployeeControllerTest {
 	}
 	
 	@Test
-	public void testGetEmployeeWhenNoId() throws Exception {
+	public void testGetEmployeeLastShiftWhenNoId() throws Exception {
 		mockMvc.perform(get("/employees/get-employee-last-shift/")).andExpect(status().isNotFound());
 	}
 	
 	@Test
-	public void testGetEmployeeWhenEmployeeNotFound() throws Exception {
+	public void testGetEmployeeLastShiftWhenEmployeeNotFound() throws Exception {
 		var employeeId = UUID.randomUUID();
 		when(employeeService.getEmployee(employeeId.toString())).thenReturn(null);
 		mockMvc.perform(get("/employees/get-employee-last-shift/"+employeeId)).andExpect(status().isNotFound());
 	}
 	
 	@Test
-	public void testGetEmployeeWhenEmployeeFound() throws Exception {
+	public void testGetEmployeeLastShiftWhenLastShiftNotFound() throws Exception {
+		var employeeId = UUID.randomUUID();
+		var employee = new Employee();
+		employee.setId(employeeId);
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(employee);
+		mockMvc.perform(get("/employees/get-employee-last-shift/"+employeeId)).andExpect(status().isNotFound());
+	}
+	
+	@Test
+	public void testGetEmployeeLastShiftWhenEmployeeFound() throws Exception {
 		var employeeId = UUID.randomUUID();
 		var employee = new Employee();
 		employee.setId(employeeId);
 		employee.startShift();
 		when(employeeService.getEmployee(employeeId.toString())).thenReturn(employee);
 		mockMvc.perform(get("/employees/get-employee-last-shift/"+employeeId).contentType("application/json")).andExpect(status().isOk()).andExpect(jsonPath("$.shiftStart").isString());
+	}
+	
+	@Test
+	public void testGetEmployeeAllShiftsWhenNoId() throws Exception {
+		mockMvc.perform(get("/employees/get-employee-all-shifts/")).andExpect(status().isNotFound());
+	}
+	
+	@Test
+	public void testGetEmployeeAllShiftsWhenEmployeeNotFound() throws Exception {
+		var employeeId = UUID.randomUUID();
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(null);
+		mockMvc.perform(get("/employees/get-employee-all-shifts/"+employeeId)).andExpect(status().isNotFound());
+	}
+	
+	@Test
+	public void testGetEmployeeAllShiftsWhenEmployeeFound() throws Exception {
+		var employeeId = UUID.randomUUID();
+		var employee = new Employee();
+		employee.setId(employeeId);
+		employee.startShift();
+		employee.stopShift(100);
+		employee.startShift();
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(employee);
+		mockMvc.perform(get("/employees/get-employee-all-shifts/"+employeeId).contentType("application/json")).andExpect(status().isOk())
+		.andExpect(jsonPath("$", Matchers.hasSize(2)))
+		.andExpect(jsonPath("$[0].shiftStart").isString())
+		.andExpect(jsonPath("$[0].shiftEnd").isString())
+		.andExpect(jsonPath("$[1].shiftStart").isString());
 	}
 	
 	@Test
