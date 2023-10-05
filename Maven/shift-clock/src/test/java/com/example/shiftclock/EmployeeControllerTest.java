@@ -47,14 +47,14 @@ public class EmployeeControllerTest {
 	
 	@Test
 	public void testGetEmployeeWhenNoId() throws Exception {
-		mockMvc.perform(get("/employees/get-employee/")).andExpect(status().isNotFound());
+		mockMvc.perform(get("/employees/get-employee-last-shift/")).andExpect(status().isNotFound());
 	}
 	
 	@Test
 	public void testGetEmployeeWhenEmployeeNotFound() throws Exception {
 		var employeeId = UUID.randomUUID();
 		when(employeeService.getEmployee(employeeId.toString())).thenReturn(null);
-		mockMvc.perform(get("/employees/get-employee/"+employeeId)).andExpect(status().isNotFound());
+		mockMvc.perform(get("/employees/get-employee-last-shift/"+employeeId)).andExpect(status().isNotFound());
 	}
 	
 	@Test
@@ -62,8 +62,9 @@ public class EmployeeControllerTest {
 		var employeeId = UUID.randomUUID();
 		var employee = new Employee();
 		employee.setId(employeeId);
+		employee.startShift();
 		when(employeeService.getEmployee(employeeId.toString())).thenReturn(employee);
-		mockMvc.perform(get("/employees/get-employee/"+employeeId).contentType("application/json")).andExpect(status().isOk()).andExpect(jsonPath("$.id").isString());
+		mockMvc.perform(get("/employees/get-employee-last-shift/"+employeeId).contentType("application/json")).andExpect(status().isOk()).andExpect(jsonPath("$.shiftStart").isString());
 	}
 	
 	@Test
