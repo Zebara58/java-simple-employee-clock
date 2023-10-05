@@ -22,6 +22,10 @@ public class EmployeeController {
 	@PostMapping("/add-employee")
 	public ResponseEntity<Employee> addEmployee(@RequestBody EmployeeRequest request) {
 		var employee = EmployeeFactory.createEmployeeFromRequest(request);
+		var foundEmployee = employeeService.getEmployee(employee.getId());
+		if (foundEmployee != null) {
+			return ResponseEntity.badRequest().build();
+		}
 		employeeService.addEmployee(employee);
 		return ResponseEntity.ok(employee);
 	}

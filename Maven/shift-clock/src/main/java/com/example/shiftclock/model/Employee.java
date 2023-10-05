@@ -14,7 +14,6 @@ public class Employee {
 	@Id
 	private String id;
 	
-	@DBRef(lazy=true)
 	private List<Shift> shifts;
 	
 	public Employee() {
