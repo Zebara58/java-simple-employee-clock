@@ -25,6 +25,18 @@ public class EmployeeController {
 		return ResponseEntity.ok(employee);
 	}
 	
+	@GetMapping("/get-employee/{id}")
+	public ResponseEntity<Employee> getEmployee(@PathVariable UUID id) {
+		if (id == null) {
+			return ResponseEntity.notFound().build();
+		}
+		var foundEmployee = employeeService.getEmployee(id.toString());
+		if (foundEmployee == null) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok(foundEmployee);
+	}
+	
 	@PostMapping("/start-shift/{id}")
 	public ResponseEntity<String> startShift(@PathVariable UUID id) {
 		if (id == null) {

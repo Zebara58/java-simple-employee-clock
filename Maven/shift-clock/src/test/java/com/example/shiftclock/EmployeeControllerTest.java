@@ -46,6 +46,27 @@ public class EmployeeControllerTest {
 	}
 	
 	@Test
+	public void testGetEmployeeWhenNoId() throws Exception {
+		mockMvc.perform(get("/employees/get-employee/")).andExpect(status().isNotFound());
+	}
+	
+	@Test
+	public void testGetEmployeeWhenEmployeeNotFound() throws Exception {
+		var employeeId = UUID.randomUUID();
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(null);
+		mockMvc.perform(get("/employees/get-employee/"+employeeId)).andExpect(status().isNotFound());
+	}
+	
+	@Test
+	public void testGetEmployeeWhenEmployeeFound() throws Exception {
+		var employeeId = UUID.randomUUID();
+		var employee = new Employee();
+		employee.setId(employeeId);
+		when(employeeService.getEmployee(employeeId.toString())).thenReturn(employee);
+		mockMvc.perform(get("/employees/get-employee/"+employeeId).contentType("application/json")).andExpect(status().isOk()).andExpect(jsonPath("$.id").isString());
+	}
+	
+	@Test
 	public void testStartShiftWhenShiftAlreadyStarted() throws Exception {
 		var employeeId = UUID.randomUUID();
 		var employee = new Employee();

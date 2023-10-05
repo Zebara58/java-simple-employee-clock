@@ -32,3 +32,31 @@ Command Line Testing:
 - Change your directory to the java-simple-employee-clock\Maven\shift-clock where the pom.xml file is
 - run "mvn clean install"
 - run "mvn spring-boot:run"
+
+Example API Calls:
+- Add Employee
+POST http://localhost:8080/employees/add-employee
+{
+    "Id": "dc1e46c3-3d3d-4a47-9e4c-593f89feef40"
+}
+
+- Get Employee
+GET http://localhost:8080/employees/get-employee/dc1e46c3-3d3d-4a47-9e4c-593f89feef40
+
+- Start Shift
+POST http://localhost:8080/employees/start-shift/dc1e46c3-3d3d-4a47-9e4c-593f89feef40
+
+- Start Lunch
+POST http://localhost:8080/employees/start-lunch/dc1e46c3-3d3d-4a47-9e4c-593f89feef40
+
+- Start Break
+POST http://localhost:8080/employees/start-break/dc1e46c3-3d3d-4a47-9e4c-593f89feef40
+
+- Stop Lunch
+POST http://localhost:8080/employees/stop-lunch/dc1e46c3-3d3d-4a47-9e4c-593f89feef40
+
+- Stop Break
+POST http://localhost:8080/employees/stop-break/dc1e46c3-3d3d-4a47-9e4c-593f89feef40
+
+- Stop Shift
+POST http://localhost:8080/employees/stop-shift/dc1e46c3-3d3d-4a47-9e4c-593f89feef40
