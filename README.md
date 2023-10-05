@@ -1,5 +1,5 @@
 # java-simple-employee-clock
-An application that represents a simple time clock for employee shifts
+An application that represents a simple time clock for employee shifts.
 The Spring Boot project was initially created using Spring Initializer (https://start.spring.io/)
 
 ## Table of Contents
